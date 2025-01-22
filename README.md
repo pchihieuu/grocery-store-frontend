@@ -228,6 +228,7 @@ quy1003-grocery_store_fe/
 ### Key Directories
 
 - `/src`: Main application source code
+
   - `/Query`: GraphQL query definitions
   - `/components`: React components organized by feature
   - `/styles`: Styling files for different screens
@@ -236,6 +237,7 @@ quy1003-grocery_store_fe/
   - `/mutuals`: Shared components like modals and notifications
 
 - `/components/ui`: Core UI component library
+
   - Built with TypeScript
   - Includes basic components like Box, Button, Card, Input, etc.
   - Web-specific implementations available
@@ -265,11 +267,12 @@ The project uses a combination of TypeScript and JavaScript, with TypeScript pri
 ### Common Issues
 
 1. Metro bundler not starting:
+
 ```bash
 rm -rf node_modules
 npm install
 npm start -- --reset-cache
-````
+```
 
 2. iOS build fails:
 
