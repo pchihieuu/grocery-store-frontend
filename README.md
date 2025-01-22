@@ -6,8 +6,8 @@ The Boolfly Grocery Store Demo is a modern mobile application designed to showca
 
 ## Prerequisite
 
-Before you begin installing and running the project, ensure you have the following prerequisites:  
-a. **Node.js**  
+Before you begin installing and running the project, ensure you have the following prerequisites:
+a. **Node.js**
  Ensure you have **Node.js** installed on your machine. You can download it from the [official website](https://nodejs.org/). It is recommended to use the LTS (Long Term Support) version.
 You can verify the installation by running:
 
@@ -15,7 +15,7 @@ You can verify the installation by running:
 node -v
 ```
 
-b. **npm (Node Package Manager)**  
+b. **npm (Node Package Manager)**
  npm is installed automatically with Node.js. You can verify the installation by running:
 
 ```bash
@@ -56,7 +56,6 @@ npm start
 
 Scan the QR code if using Expo Go or using the virtual machine offered by Android Studio -->
 
-
 # Boolfly Grocery Store Demo Mobile App
 
 A modern mobile application built with React Native, showcasing integration with Magento 2's GraphQL API and Node.js microservices. This demo app provides a seamless shopping experience for browsing and purchasing grocery items.
@@ -79,11 +78,13 @@ Before you begin, ensure you have installed:
 - [Git](https://git-scm.com/)
 
 For iOS development:
+
 - macOS
 - Xcode (latest version)
 - CocoaPods
 
 For Android development:
+
 - Android Studio
 - Android SDK
 - Java Development Kit (JDK)
@@ -93,17 +94,20 @@ For Android development:
 ### Option 1: Using Expo Go (Recommended for Quick Start)
 
 1. Install Expo CLI globally:
+
 ```bash
 npm install -g expo-cli
 ```
 
 2. Clone the repository:
+
 ```bash
 git clone https://github.com/quy1003/grocery_store_fe.git
 cd grocery_store_fe
 ```
 
 3. Install dependencies:
+
 ```bash
 npm install
 # or
@@ -111,15 +115,18 @@ yarn install
 ```
 
 4. Start the Expo development server:
+
 ```bash
 expo start
 ```
 
 5. Install Expo Go on your mobile device:
+
 - [Expo Go for Android](https://play.google.com/store/apps/details?id=host.exp.exponent)
 - [Expo Go for iOS](https://apps.apple.com/app/expo-go/id982107779)
 
 6. Scan the QR code from your terminal using:
+
 - iOS: Camera app
 - Android: Expo Go app
 
@@ -128,6 +135,7 @@ expo start
 1. Install Android Studio and set up an Android Virtual Device (AVD)
 
 2. Configure environment variables:
+
 ```bash
 # Add these to your ~/.bash_profile or ~/.zshrc
 export ANDROID_HOME=$HOME/Library/Android/sdk
@@ -138,6 +146,7 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools
 3. Start the Android emulator from Android Studio
 
 4. Run the app:
+
 ```bash
 npm run android
 # or
@@ -149,11 +158,13 @@ yarn android
 1. Install Xcode from the Mac App Store
 
 2. Install CocoaPods:
+
 ```bash
 sudo gem install cocoapods
 ```
 
 3. Install iOS dependencies:
+
 ```bash
 cd ios
 pod install
@@ -161,55 +172,57 @@ cd ..
 ```
 
 4. Run the app:
+
 ```bash
 npm run ios
 # or
 yarn ios
 ```
 
-```
 ## Project Structure
 
 ```
+
 quy1003-grocery_store_fe/
 ├── src/
-│   ├── Query/                 # GraphQL queries
-│   │   ├── cart.js
-│   │   ├── category.js
-│   │   ├── current-user.js
-│   │   ├── favorite.js
-│   │   ├── product.js
-│   │   ├── sign-in.js
-│   │   └── sign-up.js
-│   ├── assets/               # Media files and assets
-│   ├── components/           # React components
-│   │   ├── BaseScreen.js
-│   │   ├── MyTabs.js
-│   │   ├── Login/           # Login related components
-│   │   ├── Product/         # Product related components
-│   │   ├── Screens/         # Main screen components
-│   │   ├── Search/          # Search functionality
-│   │   └── ui/              # Reusable UI components
-│   ├── configs/             # Configuration files
-│   │   └── apolloClient.js
-│   ├── mutuals/             # Shared components
-│   ├── reducers/            # State management
-│   └── styles/              # Styling files
-├── components/              # UI component library
-│   └── ui/                  # Base UI components
-├── android/                 # Android specific files
-├── ios/                     # iOS specific files
-├── .github/                 # GitHub configuration
-├── .husky/                  # Git hooks
+│ ├── Query/ # GraphQL queries
+│ │ ├── cart.js
+│ │ ├── category.js
+│ │ ├── current-user.js
+│ │ ├── favorite.js
+│ │ ├── product.js
+│ │ ├── sign-in.js
+│ │ └── sign-up.js
+│ ├── assets/ # Media files and assets
+│ ├── components/ # React components
+│ │ ├── BaseScreen.js
+│ │ ├── MyTabs.js
+│ │ ├── Login/ # Login related components
+│ │ ├── Product/ # Product related components
+│ │ ├── Screens/ # Main screen components
+│ │ ├── Search/ # Search functionality
+│ │ └── ui/ # Reusable UI components
+│ ├── configs/ # Configuration files
+│ │ └── apolloClient.js
+│ ├── mutuals/ # Shared components
+│ ├── reducers/ # State management
+│ └── styles/ # Styling files
+├── components/ # UI component library
+│ └── ui/ # Base UI components
+├── android/ # Android specific files
+├── ios/ # iOS specific files
+├── .github/ # GitHub configuration
+├── .husky/ # Git hooks
 └── Various config files:
-    ├── app.json
-    ├── babel.config.js
-    ├── global.css
-    ├── gluestack-ui.config.json
-    ├── tailwind.config.js
-    ├── tsconfig.json
-    ├── .env.example
-    └── package.json
+├── app.json
+├── babel.config.js
+├── global.css
+├── gluestack-ui.config.json
+├── tailwind.config.js
+├── tsconfig.json
+├── .env.example
+└── package.json
+
 ```
 
 ### Key Directories
@@ -256,9 +269,10 @@ The project uses a combination of TypeScript and JavaScript, with TypeScript pri
 rm -rf node_modules
 npm install
 npm start -- --reset-cache
-```
+````
 
 2. iOS build fails:
+
 ```bash
 cd ios
 pod install
@@ -266,6 +280,7 @@ cd ..
 ```
 
 3. Android build fails:
+
 ```bash
 cd android
 ./gradlew clean
