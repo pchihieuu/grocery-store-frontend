@@ -107,4 +107,16 @@ export default styles = StyleSheet.create({
     color: "#32a852",
     fontWeight: "bold",
   },
+  inputError: {
+    borderColor: "red",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 5,
+    marginLeft: 5,
+  },
+  signUpButtonDisabled: {
+    opacity: 0.5,
+  },
 });

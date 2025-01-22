@@ -1,5 +1,5 @@
 import SignUpStyles from "@/src/styles/SignUpStyles";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,6 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from "react-native";
 import { useMutation } from "@apollo/client";
 import { CREATE_CUSTOMER_MUTATION } from "@/src/Query/sign-up";
@@ -25,6 +24,16 @@ const SignUpScreen = ({ navigation }) => {
     confirmPassword: "",
     isSubscribed: true,
   });
+
+  const [formErrors, setFormErrors] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [isFormValid, setIsFormValid] = useState(false);
   const [toast, setToast] = useState({
     visible: false,
     message: "",
@@ -58,64 +67,91 @@ const SignUpScreen = ({ navigation }) => {
     },
   });
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password) => {
+    // Password must be at least 8 characters long and contain at least one number, one uppercase letter, and one special character
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  const validateField = (name, value) => {
+    let error = "";
+
+    switch (name) {
+      case "firstName":
+        if (!value.trim()) {
+          error = "First name is required";
+        } else if (value.trim().length < 2) {
+          error = "First name must be at least 2 characters";
+        }
+        break;
+
+      case "lastName":
+        if (!value.trim()) {
+          error = "Last name is required";
+        } else if (value.trim().length < 2) {
+          error = "Last name must be at least 2 characters";
+        }
+        break;
+
+      case "email":
+        if (!value.trim()) {
+          error = "Email is required";
+        } else if (!validateEmail(value)) {
+          error = "Please enter a valid email address";
+        }
+        break;
+
+      case "password":
+        if (!value) {
+          error = "Password is required";
+        } else if (!validatePassword(value)) {
+          error =
+            "Password must be at least 8 characters long and contain at least one number, one uppercase letter, and one special character";
+        }
+        break;
+
+      case "confirmPassword":
+        if (!value) {
+          error = "Please confirm your password";
+        } else if (value !== formData.password) {
+          error = "Passwords do not match";
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    return error;
+  };
+
+  const handleInputChange = (name, value) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    const error = validateField(name, value);
+    setFormErrors((prev) => ({ ...prev, [name]: error }));
+  };
+
+  useEffect(() => {
+    // Check if all fields are valid
+    const hasErrors = Object.values(formErrors).some((error) => error !== "");
+    const hasEmptyFields = Object.values(formData).some(
+      (value) => value === "",
+    );
+    setIsFormValid(!hasErrors && !hasEmptyFields && isTermsAccepted);
+  }, [formData, formErrors, isTermsAccepted]);
+
   const handleTermsToggle = () => {
     setIsTermsAccepted(!isTermsAccepted);
   };
 
-  const validateForm = () => {
-    if (!formData.firstName.trim()) {
-      setToast({
-        visible: true,
-        message: "First name is required",
-        type: "error",
-      });
-      return false;
-    }
-    if (!formData.lastName.trim()) {
-      setToast({
-        visible: true,
-        message: "Last name is required",
-        type: "error",
-      });
-      return false;
-    }
-    if (!formData.email.trim()) {
-      setToast({
-        visible: true,
-        message: "Email is required",
-        type: "error",
-      });
-      return false;
-    }
-    if (!formData.password) {
-      setToast({
-        visible: true,
-        message: "Password is required",
-        type: "error",
-      });
-      return false;
-    }
-    if (formData.password !== formData.confirmPassword) {
-      setToast({
-        visible: true,
-        message: "Passwords do not match",
-        type: "error",
-      });
-      return false;
-    }
-    if (!isTermsAccepted) {
-      setToast({
-        visible: true,
-        message: "Please accept the terms and conditions",
-        type: "error",
-      });
-      return false;
-    }
-    return true;
-  };
-
   const handleSignUp = async () => {
-    if (!validateForm()) return;
+    if (!isFormValid) return;
 
     try {
       await createCustomer({
@@ -130,10 +166,41 @@ const SignUpScreen = ({ navigation }) => {
         },
       });
     } catch (err) {
-      // Additional error handling if needed
       console.error("Try/Catch Error:", err);
     }
   };
+
+  const renderInput = (name, placeholder, options = {}) => (
+    <View style={SignUpStyles.inputContainer}>
+      <TextInput
+        style={[
+          SignUpStyles.input,
+          formErrors[name] ? SignUpStyles.inputError : null,
+        ]}
+        placeholder={placeholder}
+        value={formData[name]}
+        onChangeText={(text) => handleInputChange(name, text)}
+        {...options}
+      />
+      {options.secureTextEntry && (
+        <TouchableOpacity
+          style={SignUpStyles.eyeIcon}
+          onPress={() => {
+            if (name === "password") {
+              setShowPassword(!showPassword);
+            } else {
+              setShowConfirmPassword(!showConfirmPassword);
+            }
+          }}
+        >
+          <Text>👁️</Text>
+        </TouchableOpacity>
+      )}
+      {formErrors[name] ? (
+        <Text style={SignUpStyles.errorText}>{formErrors[name]}</Text>
+      ) : null}
+    </View>
+  );
 
   return (
     <SafeAreaView style={SignUpStyles.container}>
@@ -153,7 +220,6 @@ const SignUpScreen = ({ navigation }) => {
           contentContainerStyle={SignUpStyles.scrollContent}
         >
           <View style={SignUpStyles.content}>
-            {/* Logo Section */}
             <View style={SignUpStyles.logoContainer}>
               <Image
                 source={require("../../assets/logo.png")}
@@ -162,82 +228,25 @@ const SignUpScreen = ({ navigation }) => {
               />
             </View>
 
-            {/* Header Section */}
             <Text style={SignUpStyles.title}>Create Account</Text>
             <Text style={SignUpStyles.subtitle}>
               Please sign up to continue
             </Text>
 
-            {/* Form Section */}
             <View style={SignUpStyles.form}>
-              <View style={SignUpStyles.inputContainer}>
-                <TextInput
-                  style={SignUpStyles.input}
-                  placeholder="First name"
-                  value={formData.firstName}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, firstName: text })
-                  }
-                />
-              </View>
-              <View style={SignUpStyles.inputContainer}>
-                <TextInput
-                  style={SignUpStyles.input}
-                  placeholder="Last name"
-                  value={formData.lastName}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, lastName: text })
-                  }
-                />
-              </View>
-              <View style={SignUpStyles.inputContainer}>
-                <TextInput
-                  style={SignUpStyles.input}
-                  placeholder="Email"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  value={formData.email}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, email: text })
-                  }
-                />
-              </View>
-              <View style={SignUpStyles.inputContainer}>
-                <TextInput
-                  style={SignUpStyles.input}
-                  placeholder="Password"
-                  secureTextEntry={!showPassword}
-                  value={formData.password}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, password: text })
-                  }
-                />
-                <TouchableOpacity
-                  style={SignUpStyles.eyeIcon}
-                  onPress={() => setShowPassword(!showPassword)}
-                >
-                  <Text>👁️</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={SignUpStyles.inputContainer}>
-                <TextInput
-                  style={SignUpStyles.input}
-                  placeholder="Confirm password"
-                  secureTextEntry={!showConfirmPassword}
-                  value={formData.confirmPassword}
-                  onChangeText={(text) =>
-                    setFormData({ ...formData, confirmPassword: text })
-                  }
-                />
-                <TouchableOpacity
-                  style={SignUpStyles.eyeIcon}
-                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  <Text>👁️</Text>
-                </TouchableOpacity>
-              </View>
+              {renderInput("firstName", "First name")}
+              {renderInput("lastName", "Last name")}
+              {renderInput("email", "Email", {
+                keyboardType: "email-address",
+                autoCapitalize: "none",
+              })}
+              {renderInput("password", "Password", {
+                secureTextEntry: !showPassword,
+              })}
+              {renderInput("confirmPassword", "Confirm password", {
+                secureTextEntry: !showConfirmPassword,
+              })}
 
-              {/* Terms and Conditions */}
               <TouchableOpacity
                 style={SignUpStyles.termsContainer}
                 onPress={handleTermsToggle}
@@ -256,21 +265,20 @@ const SignUpScreen = ({ navigation }) => {
                 <Text style={SignUpStyles.termsText}>Terms and Conditions</Text>
               </TouchableOpacity>
 
-              {/* Sign Up Button */}
               <TouchableOpacity
                 style={[
                   SignUpStyles.signUpButton,
-                  loading && SignUpStyles.signUpButtonDisabled,
+                  (!isFormValid || loading) &&
+                    SignUpStyles.signUpButtonDisabled,
                 ]}
                 onPress={handleSignUp}
-                disabled={loading}
+                disabled={!isFormValid || loading}
               >
                 <Text style={SignUpStyles.signUpButtonText}>
                   {loading ? "Signing Up..." : "Sign Up"}
                 </Text>
               </TouchableOpacity>
 
-              {/* Login Link */}
               <View style={SignUpStyles.loginContainer}>
                 <Text style={SignUpStyles.loginText}>
                   Already have an account?{" "}
